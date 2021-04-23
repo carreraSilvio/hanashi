@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -15,6 +16,7 @@ namespace Hanashi.Editortime
         }
 
         private DialogueGraphView _graphView;
+        private string _fileName = "New Narrative";
 
         private void OnEnable()
         {
@@ -37,6 +39,15 @@ namespace Hanashi.Editortime
         {
             var toolbar = new Toolbar();
 
+            var fileNameTextField = new TextField("File name:");
+            fileNameTextField.SetValueWithoutNotify(_fileName);
+            fileNameTextField.MarkDirtyRepaint();
+            fileNameTextField.RegisterCallback(callback: (EventCallback<ChangeEvent<string>>)(evt => _fileName = evt.newValue));
+            toolbar.Add(fileNameTextField);
+
+            toolbar.Add(new Button(() => RequestDataOperation(true)) { text = "Save" });
+            toolbar.Add(new Button(() => RequestDataOperation(false)) { text = "Load" });
+
             var nodeCreationBtn = new Button(() =>
             {
                 _graphView.CreateNode("NewNode");
@@ -45,6 +56,30 @@ namespace Hanashi.Editortime
 
             toolbar.Add(nodeCreationBtn);
             rootVisualElement.Add(toolbar);
+        }
+
+        private void RequestDataOperation(bool save)
+        {
+            if(string.IsNullOrEmpty(_fileName))
+            {
+                EditorUtility.DisplayDialog("Invalid file name", "Please enter a valid filename", "OK");
+                return;
+            }
+
+            var saveUtility = DialogueGraphSaveUtility.GetInstance(_graphView);
+            if (save)
+            {
+                saveUtility.SaveGraph(_fileName);
+            }
+            else
+            {
+                saveUtility.LoadGraph(_fileName);
+            }
+        }
+
+        private void SaveData()
+        {
+            throw new NotImplementedException();
         }
 
         private void OnDisable()

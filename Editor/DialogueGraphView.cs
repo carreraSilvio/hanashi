@@ -13,7 +13,7 @@ namespace Hanashi.Editortime
 {
     public class DialogueGraphView : GraphView
     {
-        private readonly Vector2 DEFAULT_NODE_SIZE = new Vector2(150f, 200f);
+        public readonly Vector2 DEFAULT_NODE_SIZE = new Vector2(150f, 200f);
 
         public DialogueGraphView()
         {
@@ -55,7 +55,7 @@ namespace Hanashi.Editortime
             var node = new DialogueNode
             {
                 title = "START",
-                GUID = Guid.NewGuid().ToString(),
+                GUID = Guid.NewGuid().ToString().Substring(0, 8),
                 Message = "EntryPoint",
                 EntryPoint = true
             };
@@ -71,17 +71,55 @@ namespace Hanashi.Editortime
             return node;
         }
 
-        private void AddChoicePort(DialogueNode node)
+        public void AddChoicePort(DialogueNode node, string portName = "")
         {
             var generatedPort = GeneratePort(node, Direction.Output);
 
+
+            var oldLabel = generatedPort.contentContainer.Q<Label>("type");
+            generatedPort.contentContainer.Remove(oldLabel);
+
             var outputPortCount = node.outputContainer.Query("connector").ToList().Count;
-            generatedPort.portName = $"Choice {outputPortCount}";
+            generatedPort.portName = string.IsNullOrEmpty(portName) ? 
+                $"Choice {outputPortCount + 1}" :
+                portName;
+
+            var textField = new TextField
+            {
+                name = string.Empty,
+                value = generatedPort.portName
+            };
+            textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
+            generatedPort.contentContainer.Add(new Label(" "));
+            generatedPort.contentContainer.Add(textField);
+            var deleteBtn = new Button(() => RemovePort(node, generatedPort))
+            {
+                text = "X"
+            };
+            generatedPort.contentContainer.Add(deleteBtn);
+
 
             node.outputContainer.Add(generatedPort);
             node.RefreshPorts();
             node.RefreshExpandedState();
-            
+        }
+
+        private void RemovePort(DialogueNode dialogueNode, Port generatedPort)
+        {
+            var targetEdge = edges.ToList().Where(x =>
+            x.output.portName == generatedPort.portName &&
+            x.output.node == generatedPort.node);
+
+            if (targetEdge.Any())
+            {
+                var edge = targetEdge.First();
+                edge.input.Disconnect(edge);
+                RemoveElement(targetEdge.First());
+            }
+
+            dialogueNode.outputContainer.Remove(generatedPort);
+            dialogueNode.RefreshPorts();
+            dialogueNode.RefreshExpandedState();
         }
 
         public void CreateNode(string nodeName)
@@ -95,7 +133,7 @@ namespace Hanashi.Editortime
             {
                 title = nodeName,
                 Message = nodeName,
-                GUID = Guid.NewGuid().ToString()
+                GUID = Guid.NewGuid().ToString().Substring(0, 8)
             };
 
             var inputPort = GeneratePort(node, Direction.Input, Port.Capacity.Multi);
