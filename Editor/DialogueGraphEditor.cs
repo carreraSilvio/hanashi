@@ -60,8 +60,6 @@ namespace Hanashi.Editortime
             rootVisualElement.Add(toolbar);
         }
 
-        private readonly Vector2 MINI_MAP_SIZE = new Vector2(100, 75);
-
         private void GenerateMiniMap()
         {
             var miniMap = new MiniMap() { anchored = true};
