@@ -85,7 +85,7 @@ namespace Hanashi.Editortime
                 var links = _loadedGraphData.NodeLinks.Where(x => x.OutputNodeGUID == DialogueNodes[i].GUID).ToList();
                 for (int j = 0; j < links.Count; j++)
                 {
-                    var inputNodeGUID = links[i].InputNodeGUID;
+                    var inputNodeGUID = links[j].InputNodeGUID;
                     var inputNode = DialogueNodes.First(x => x.GUID == inputNodeGUID);
                     LinkNodes(DialogueNodes[i].outputContainer[j].Q<Port>(), (Port)inputNode.inputContainer[0]);
 

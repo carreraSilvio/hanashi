@@ -64,6 +64,8 @@ namespace Hanashi.Editortime
             generatedPort.portName = "Next";
             node.outputContainer.Add(generatedPort);
 
+            node.capabilities &= ~Capabilities.Deletable; 
+
             node.RefreshPorts();
             node.RefreshExpandedState();
 
@@ -140,10 +142,22 @@ namespace Hanashi.Editortime
             inputPort.name = "Input";
             node.inputContainer.Add(inputPort);
 
+            node.styleSheets.Add(Resources.Load<StyleSheet>("DialogueNodeStyle"));
 
-            var button = new Button(() => { AddChoicePort(node); });
-            button.text = "+";
+            var button = new Button(() => { AddChoicePort(node); })
+            {
+                text = "+"
+            };
             node.titleContainer.Add(button);
+
+            var textField = new TextField(string.Empty);
+            textField.RegisterValueChangedCallback(evt =>
+            {
+                node.Message = evt.newValue;
+                node.title = evt.newValue;
+            });
+            textField.SetValueWithoutNotify(node.title);
+            node.mainContainer.Add(textField);
 
             node.RefreshPorts();
             node.RefreshExpandedState();

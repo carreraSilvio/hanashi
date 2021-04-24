@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,6 +23,7 @@ namespace Hanashi.Editortime
         {
             ConstructGraph();
             GenerateToolBar();
+            GenerateMiniMap();
         }
 
         private void ConstructGraph()
@@ -56,6 +58,16 @@ namespace Hanashi.Editortime
 
             toolbar.Add(nodeCreationBtn);
             rootVisualElement.Add(toolbar);
+        }
+
+        private readonly Vector2 MINI_MAP_SIZE = new Vector2(100, 75);
+
+        private void GenerateMiniMap()
+        {
+            var miniMap = new MiniMap() { anchored = true};
+            
+            miniMap.SetPosition(new Rect(20,40, 100, 75));
+            _graphView.Add(miniMap);
         }
 
         private void RequestDataOperation(bool save)
