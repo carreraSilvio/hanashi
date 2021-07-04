@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Hanashi.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,8 +12,15 @@ namespace Hanashi.Editortime
 {
     public class DialogueGraphView : GraphView
     {
-        public readonly Vector2 DEFAULT_NODE_SIZE = new Vector2(150f, 200f);
-        private DialogueNodeSearchWindow _searchWindow;
+        public readonly List<ExposedProperty> ExposedProperties = new List<ExposedProperty>();
+
+        public static readonly Vector2 DEFAULT_NODE_SIZE = new Vector2(150f, 200f);
+        public static readonly Vector2 DEFAULT_NODE_POSITION = new Vector2(350f, 200f);
+
+        private static readonly Vector2 START_NODE_SIZE = new Vector2(150f, 150f);
+        private static readonly Vector2 START_NODE_POSITION = new Vector2(200f, 150f);
+        
+        private Blackboard _blackboard;
 
         public DialogueGraphView()
         {
@@ -67,14 +76,13 @@ namespace Hanashi.Editortime
             node.RefreshPorts();
             node.RefreshExpandedState();
 
-            node.SetPosition(new Rect(100, 200, 100, 150));
+            node.SetPosition(new Rect(START_NODE_POSITION, START_NODE_SIZE));
             return node;
         }
 
         public void AddChoicePort(DialogueNode node, string portName = "")
         {
             var generatedPort = GeneratePort(node, Direction.Output);
-
 
             var oldLabel = generatedPort.contentContainer.Q<Label>("type");
             generatedPort.contentContainer.Remove(oldLabel);
@@ -92,7 +100,7 @@ namespace Hanashi.Editortime
             textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
             generatedPort.contentContainer.Add(new Label(" "));
             generatedPort.contentContainer.Add(textField);
-            var deleteBtn = new Button(() => RemovePort(node, generatedPort))
+            var deleteBtn = new Button(() => RemoveChoicePort(node, generatedPort))
             {
                 text = "X"
             };
@@ -104,7 +112,7 @@ namespace Hanashi.Editortime
             node.RefreshExpandedState();
         }
 
-        private void RemovePort(DialogueNode dialogueNode, Port generatedPort)
+        private void RemoveChoicePort(DialogueNode dialogueNode, Port generatedPort)
         {
             var targetEdge = edges.ToList().Where(x =>
             x.output.portName == generatedPort.portName &&
@@ -163,5 +171,73 @@ namespace Hanashi.Editortime
             node.SetPosition(new Rect(nodePosition, DEFAULT_NODE_SIZE));
             return node;
         }
+        public void CreateBlackboard()
+        {
+            _blackboard = new Blackboard();
+            _blackboard.Add(new BlackboardSection { title = "Exposed Variables" });
+            _blackboard.addItemRequested = HandleBlackboardAddRequested;
+            _blackboard.editTextRequested = HandleBlackboardEditRequested;
+            _blackboard.SetPosition(new Rect(10, 140 + 40, 180, 200));
+            Add(_blackboard);
+        }
+
+        public void ClearBlackboard()
+        {
+            ExposedProperties.Clear();
+            _blackboard.Clear();
+        }
+
+        public void AddPropertyToBlackboard(ExposedProperty exposedProperty)
+        {
+            var localPropertyName = exposedProperty.PropertyName;
+            var localPropertyValue = exposedProperty.PropertyValue;
+            while (ExposedProperties.Any(x => x.PropertyName == localPropertyName))
+            {
+                localPropertyName = $"{localPropertyName}(1)";
+            }
+
+            var property = new ExposedProperty();
+            property.PropertyName = localPropertyName;
+            property.PropertyValue = localPropertyValue;
+            ExposedProperties.Add(property);
+
+            var container = new VisualElement();
+            var blackboardField = new BlackboardField { text = property.PropertyName, typeText = "string property" };
+            container.Add(blackboardField);
+
+            var propertyValueTextField = new TextField("Value:")
+            {
+                value = property.PropertyValue
+            };
+            propertyValueTextField.RegisterValueChangedCallback(evt =>
+            {
+                var changingPropertyIndex = ExposedProperties.FindIndex(x => x.PropertyName == property.PropertyName);
+                ExposedProperties[changingPropertyIndex].PropertyValue = evt.newValue;
+            });
+            var blackboardValueRow = new BlackboardRow(blackboardField, propertyValueTextField);
+            container.Add(blackboardValueRow);
+
+            _blackboard.Add(container);
+        }
+
+        private void HandleBlackboardAddRequested(Blackboard contextBlackboard)
+        {
+            AddPropertyToBlackboard(new ExposedProperty());
+        }
+        private void HandleBlackboardEditRequested(Blackboard contextBlackboard, VisualElement element, string newValue)
+        {
+            var oldPropertyName = ((BlackboardField)element).text;
+            if (ExposedProperties.Any(x => x.PropertyName == newValue))
+            {
+                EditorUtility.DisplayDialog("Error", "A property with this name already exists.", "OK");
+                return;
+            }
+
+            var propertyIndex = ExposedProperties.FindIndex(x => x.PropertyName == oldPropertyName);
+            ExposedProperties[propertyIndex].PropertyName = newValue;
+            ((BlackboardField)element).text = newValue;
+        }
+
+
     }
 }
