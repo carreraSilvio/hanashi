@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
 
@@ -14,6 +11,7 @@ namespace Hanashi.Editortime
     public class DialogueGraphView : GraphView
     {
         public readonly Vector2 DEFAULT_NODE_SIZE = new Vector2(150f, 200f);
+        private DialogueNodeSearchWindow _searchWindow;
 
         public DialogueGraphView()
         {
@@ -124,12 +122,12 @@ namespace Hanashi.Editortime
             dialogueNode.RefreshExpandedState();
         }
 
-        public void CreateNode(string nodeName)
+        public void CreateNode(string nodeName, Vector2 nodePosition)
         {
-            AddElement(CreateDialogueNode(nodeName));
+            AddElement(CreateDialogueNode(nodeName, nodePosition));
         }
 
-        public DialogueNode CreateDialogueNode(string nodeName)
+        public DialogueNode CreateDialogueNode(string nodeName, Vector2 nodePosition)
         {
             var node = new DialogueNode
             {
@@ -162,7 +160,7 @@ namespace Hanashi.Editortime
             node.RefreshPorts();
             node.RefreshExpandedState();
 
-            node.SetPosition(new Rect(Vector2.zero, DEFAULT_NODE_SIZE));
+            node.SetPosition(new Rect(nodePosition, DEFAULT_NODE_SIZE));
             return node;
         }
     }

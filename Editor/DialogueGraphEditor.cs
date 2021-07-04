@@ -18,15 +18,17 @@ namespace Hanashi.Editortime
 
         private DialogueGraphView _graphView;
         private string _fileName = "New Narrative";
+        private DialogueNodeSearchWindow _searchWindow;
 
         private void OnEnable()
         {
-            ConstructGraph();
-            GenerateToolBar();
-            GenerateMiniMap();
+            CreateGraph();
+            CreateToolBar();
+            CreateMiniMap();
+            CreateSearchWindow();
         }
 
-        private void ConstructGraph()
+        private void CreateGraph()
         {
             _graphView = new DialogueGraphView
             {
@@ -37,7 +39,7 @@ namespace Hanashi.Editortime
             rootVisualElement.Add(_graphView);
         }
 
-        private void GenerateToolBar()
+        private void CreateToolBar()
         {
             var toolbar = new Toolbar();
 
@@ -52,7 +54,7 @@ namespace Hanashi.Editortime
 
             var nodeCreationBtn = new Button(() =>
             {
-                _graphView.CreateNode("NewNode");
+                _graphView.CreateNode("NewNode", Vector2.zero);
             });
             nodeCreationBtn.text = "Create node";
 
@@ -60,12 +62,20 @@ namespace Hanashi.Editortime
             rootVisualElement.Add(toolbar);
         }
 
-        private void GenerateMiniMap()
+        private void CreateMiniMap()
         {
             var miniMap = new MiniMap() { anchored = true};
             
             miniMap.SetPosition(new Rect(20,40, 100, 75));
             _graphView.Add(miniMap);
+        }
+
+        private void CreateSearchWindow()
+        {
+            _searchWindow = ScriptableObject.CreateInstance<DialogueNodeSearchWindow>();
+            _searchWindow.Init(this, _graphView);
+            _graphView.nodeCreationRequest = context =>
+                SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
         }
 
         private void RequestDataOperation(bool save)

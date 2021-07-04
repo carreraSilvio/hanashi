@@ -113,7 +113,7 @@ namespace Hanashi.Editortime
         {
             foreach(var nodeData in _loadedGraphData.Nodes)
             {
-                var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Message);
+                var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Message, nodeData.Position);
                 tempNode.GUID = nodeData.GUID;
                 _targetGraphView.AddElement(tempNode);
 
