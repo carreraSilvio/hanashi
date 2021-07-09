@@ -22,7 +22,7 @@ namespace Hanashi.Editortime
 
         public void SaveGraph(string fileName)
         {
-            var dialogueGraphData = ScriptableObject.CreateInstance<NarrativeData>();
+            var narrativeGraphData = ScriptableObject.CreateInstance<NarrativeData>();
             SaveNodes();
             SaveExposedProperties();
 
@@ -31,7 +31,7 @@ namespace Hanashi.Editortime
                 AssetDatabase.CreateFolder("Assets", "Resources");
             }
 
-            AssetDatabase.CreateAsset(dialogueGraphData, $"Assets/Resources/{fileName}.asset");
+            AssetDatabase.CreateAsset(narrativeGraphData, $"Assets/Resources/{fileName}.asset");
             AssetDatabase.SaveAssets();
 
             #region Nested
@@ -45,7 +45,7 @@ namespace Hanashi.Editortime
                     var outputNode = connectedPorts[i].output.node as HanashiNode;
                     var inputNode = connectedPorts[i].input.node as HanashiNode;
 
-                    dialogueGraphData.NodeLinks.Add(new NodeLinkData()
+                    narrativeGraphData.NodeLinks.Add(new NodeLinkData()
                     {
                         OutputNodeGUID = outputNode.GUID,
                         InputNodeGUID = inputNode.GUID,
@@ -55,7 +55,7 @@ namespace Hanashi.Editortime
 
                 foreach (TextNode hanashiNode in HanashiNodes.Where(node => node is TextNode))
                 {
-                    dialogueGraphData.Nodes.Add(new NodeData()
+                    narrativeGraphData.Nodes.Add(new NodeData()
                     {
                         GUID = hanashiNode.GUID,
                         Message = hanashiNode.Message,
@@ -65,7 +65,7 @@ namespace Hanashi.Editortime
             }
             void SaveExposedProperties()
             {
-                dialogueGraphData.ExposedProperties.AddRange(_targetGraphView.ExposedProperties);
+                narrativeGraphData.ExposedProperties.AddRange(_targetGraphView.ExposedProperties);
             } 
             #endregion
         }
@@ -106,7 +106,7 @@ namespace Hanashi.Editortime
             {
                 foreach (var nodeData in _loadedNarrativeData.Nodes)
                 {
-                    var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Position);
+                    var tempNode = _targetGraphView.CrateChoiceNode(nodeData.Position);
                     tempNode.GUID = nodeData.GUID;
                     tempNode.Message = nodeData.Message;
 

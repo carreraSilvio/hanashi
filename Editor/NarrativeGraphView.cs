@@ -125,7 +125,7 @@ namespace Hanashi.Editortime
             dialogueNode.RefreshExpandedState();
         }
 
-        public ChoiceNode CreateDialogueNode(Vector2 nodePosition)
+        public ChoiceNode CrateChoiceNode(Vector2 nodePosition)
         {
             var node = new ChoiceNode();
 

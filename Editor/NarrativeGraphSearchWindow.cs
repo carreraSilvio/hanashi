@@ -51,7 +51,7 @@ namespace Hanashi.Editortime
 
             if (SearchTreeEntry.userData is ChoiceNode) //Every ChoiceNode is a TextNode so we need to check it first
             {
-                _dialogueGraphView.CreateDialogueNode(localMousePosition);
+                _dialogueGraphView.CrateChoiceNode(localMousePosition);
                 return true;
             }
             else if (SearchTreeEntry.userData is TextNode)
