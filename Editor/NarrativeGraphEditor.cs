@@ -62,19 +62,19 @@ namespace Hanashi.Editortime
             toolbar.Add(new Button(() => RequestDataOperation(true)) { text = "Save" });
             toolbar.Add(new Button(() => RequestDataOperation(false)) { text = "Load" });
 
-            var nodeCreationBtn = new Button(() =>
-            {
-                _graphView.CrateChoiceNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
-            })
-            {
-                text = "Create node"
-            };
             var textNodeCreationBtn = new Button(() =>
             {
                 _graphView.CreateTextNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
             })
             {
-                text = "Create text node"
+                text = "Add text node"
+            };
+            var nodeCreationBtn = new Button(() =>
+            {
+                _graphView.CrateChoiceNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
+            })
+            {
+                text = "Add choice node"
             };
 
             toolbar.Add(nodeCreationBtn);
@@ -115,11 +115,6 @@ namespace Hanashi.Editortime
             {
                 saveUtility.LoadGraph(_fileName);
             }
-        }
-
-        private void SaveData()
-        {
-            throw new NotImplementedException();
         }
     }
 }
