@@ -104,10 +104,10 @@ namespace Hanashi.Editortime
                 {
                     var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Message, nodeData.Position);
                     tempNode.GUID = nodeData.GUID;
-                    _targetGraphView.AddElement(tempNode);
+                    //_targetGraphView.AddElement(tempNode);
 
                     var nodePorts = _loadedGraphData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
-                    nodePorts.ForEach(x => _targetGraphView.AddChoicePort(tempNode, x.PortName));
+                    nodePorts.ForEach(x => _targetGraphView.CreateChoicePort(tempNode, x.PortName));
                 }
             }
             void LoadNodeLinks()

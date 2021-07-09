@@ -46,7 +46,7 @@ namespace Hanashi.Editortime
 
             if(SearchTreeEntry.userData is DialogueNode)
             {
-                _dialogueGraphView.CreateNode("Dialogue Node", localMousePosition);
+                _dialogueGraphView.CreateDialogueNode("Dialogue Node", localMousePosition);
                 return true;
             }
 

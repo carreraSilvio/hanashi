@@ -1,14 +1,9 @@
-﻿using UnityEditor.Experimental.GraphView;
-
-namespace Hanashi.Editortime
+﻿namespace Hanashi.Editortime
 {
-    public class DialogueNode : Node
+    public class DialogueNode : HanashiNode
     {
-        public string GUID;
         public string Message;
 
         public bool EntryPoint = false;
-
-     
     }
 }

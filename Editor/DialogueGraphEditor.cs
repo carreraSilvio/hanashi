@@ -17,7 +17,7 @@ namespace Hanashi.Editortime
         public static void OpenHanashiDialogueEditor()
         {
             var window = GetWindow<DialogueGraphEditor>();
-            window.titleContent = new GUIContent("Hanashi");
+            window.titleContent = new GUIContent("Hanashi Dialogue Editor");
         } 
         #endregion
 
@@ -67,11 +67,21 @@ namespace Hanashi.Editortime
 
             var nodeCreationBtn = new Button(() =>
             {
-                _graphView.CreateNode("NewNode", DialogueGraphView.DEFAULT_NODE_POSITION);
-            });
-            nodeCreationBtn.text = "Create node";
+                _graphView.CreateDialogueNode("NewNode", DialogueGraphView.DEFAULT_NODE_POSITION);
+            })
+            {
+                text = "Create node"
+            };
+            var textNodeCreationBtn = new Button(() =>
+            {
+                _graphView.CreateTextNode(DialogueGraphView.DEFAULT_NODE_POSITION);
+            })
+            {
+                text = "Create text node"
+            };
 
             toolbar.Add(nodeCreationBtn);
+            toolbar.Add(textNodeCreationBtn);
             rootVisualElement.Add(toolbar);
         }
 

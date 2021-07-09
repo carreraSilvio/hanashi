@@ -52,7 +52,7 @@ namespace Hanashi.Editortime
             return compatiblePorts;
         }
 
-        private Port GeneratePort(DialogueNode node, Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)
+        private Port GeneratePort(Node node, Direction portDirection, Port.Capacity capacity = Port.Capacity.Single)
         {
             return node.InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
         }
@@ -80,7 +80,7 @@ namespace Hanashi.Editortime
             return node;
         }
 
-        public void AddChoicePort(DialogueNode node, string portName = "")
+        public void CreateChoicePort(DialogueNode node, string portName = "")
         {
             var generatedPort = GeneratePort(node, Direction.Output);
 
@@ -106,7 +106,6 @@ namespace Hanashi.Editortime
             };
             generatedPort.contentContainer.Add(deleteBtn);
 
-
             node.outputContainer.Add(generatedPort);
             node.RefreshPorts();
             node.RefreshExpandedState();
@@ -130,17 +129,12 @@ namespace Hanashi.Editortime
             dialogueNode.RefreshExpandedState();
         }
 
-        public void CreateNode(string nodeName, Vector2 nodePosition)
-        {
-            AddElement(CreateDialogueNode(nodeName, nodePosition));
-        }
-
         public DialogueNode CreateDialogueNode(string nodeName, Vector2 nodePosition)
         {
             var node = new DialogueNode
             {
-                title = nodeName,
-                Message = nodeName,
+                title = "Dialogue Node",
+                Message = "Message",
                 GUID = Guid.NewGuid().ToString().Substring(0, 8)
             };
 
@@ -150,7 +144,7 @@ namespace Hanashi.Editortime
 
             node.styleSheets.Add(Resources.Load<StyleSheet>("DialogueNodeStyle"));
 
-            var button = new Button(() => { AddChoicePort(node); })
+            var button = new Button(() => { CreateChoicePort(node); })
             {
                 text = "+"
             };
@@ -169,8 +163,51 @@ namespace Hanashi.Editortime
             node.RefreshExpandedState();
 
             node.SetPosition(new Rect(nodePosition, DEFAULT_NODE_SIZE));
+
+            AddElement(node);
             return node;
         }
+
+        public TextNode CreateTextNode(Vector2 nodePosition)
+        {
+            var node = new TextNode();
+
+            var inputPort = GeneratePort(node, Direction.Input, Port.Capacity.Multi);
+            inputPort.name = "Input";
+            node.inputContainer.Add(inputPort);
+
+            var outputPort = GeneratePort(node, Direction.Output, Port.Capacity.Single);
+            outputPort.name = "Output";
+            outputPort.portName = "Next";
+            node.outputContainer.Add(outputPort);
+
+            node.styleSheets.Add(Resources.Load<StyleSheet>("TextNodeStyle"));
+
+            node.mainContainer.Add(new Label("Speaker"));
+            var speakerTextField = new TextField(string.Empty);
+            speakerTextField.RegisterValueChangedCallback(evt =>
+            {
+                node.Message = evt.newValue;
+            });
+            node.mainContainer.Add(speakerTextField);
+
+            node.mainContainer.Add(new Label("Message"));
+            var messageTextField = new TextField(string.Empty);
+            messageTextField.RegisterValueChangedCallback(evt =>
+            {
+                node.Message = evt.newValue;
+            });
+            node.mainContainer.Add(messageTextField);
+
+            node.RefreshPorts();
+            node.RefreshExpandedState();
+
+            node.SetPosition(new Rect(nodePosition, DEFAULT_NODE_SIZE));
+
+            AddElement(node);
+            return node;
+        }
+
         public void CreateBlackboard()
         {
             _blackboard = new Blackboard();
