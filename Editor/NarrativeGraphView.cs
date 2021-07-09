@@ -10,7 +10,7 @@ using Button = UnityEngine.UIElements.Button;
 
 namespace Hanashi.Editortime
 {
-    public class DialogueGraphView : GraphView
+    public class NarrativeGraphView : GraphView
     {
         public readonly List<ExposedProperty> ExposedProperties = new List<ExposedProperty>();
 
@@ -22,7 +22,7 @@ namespace Hanashi.Editortime
         
         private Blackboard _blackboard;
 
-        public DialogueGraphView()
+        public NarrativeGraphView()
         {
             styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraphStyle"));
 
@@ -57,13 +57,15 @@ namespace Hanashi.Editortime
             return node.InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
         }
 
-        private ChoiceNode GenerateStartNode()
+        private HanashiNode GenerateStartNode()
         {
-            var node = new ChoiceNode();
+            var node = new HanashiNode();
 
             var generatedPort = GeneratePort(node, Direction.Output);
             generatedPort.portName = "Next";
             node.outputContainer.Add(generatedPort);
+            node.EntryPoint = true;
+            node.title = "Start Node";
 
             node.capabilities &= ~Capabilities.Deletable; 
 
@@ -125,12 +127,7 @@ namespace Hanashi.Editortime
 
         public ChoiceNode CreateDialogueNode(Vector2 nodePosition)
         {
-            var node = new ChoiceNode
-            {
-                title = "Dialogue Node",
-                Message = "Message",
-                GUID = Guid.NewGuid().ToString().Substring(0, 8)
-            };
+            var node = new ChoiceNode();
 
             var inputPort = GeneratePort(node, Direction.Input, Port.Capacity.Multi);
             inputPort.name = "Input";

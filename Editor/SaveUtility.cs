@@ -8,18 +8,21 @@ using UnityEngine.UIElements;
 
 namespace Hanashi.Editortime
 {
-    public class DialogueGraphSaveUtility
+    public sealed class SaveUtility
     {
-        private DialogueGraphView _targetGraphView;
+        private NarrativeGraphView _targetGraphView;
 
-        public static DialogueGraphSaveUtility GetInstance(DialogueGraphView targetGraphView)
+
+        private NarrativeData _loadedNarrativeData;
+
+        public static SaveUtility GetInstance(NarrativeGraphView targetGraphView)
         {
-            return new DialogueGraphSaveUtility() { _targetGraphView = targetGraphView };
+            return new SaveUtility() { _targetGraphView = targetGraphView };
         }
 
         public void SaveGraph(string fileName)
         {
-            var dialogueGraphData = ScriptableObject.CreateInstance<DialogueGraphData>();
+            var dialogueGraphData = ScriptableObject.CreateInstance<NarrativeData>();
             SaveNodes();
             SaveExposedProperties();
 
@@ -31,6 +34,7 @@ namespace Hanashi.Editortime
             AssetDatabase.CreateAsset(dialogueGraphData, $"Assets/Resources/{fileName}.asset");
             AssetDatabase.SaveAssets();
 
+            #region Nested
             void SaveNodes()
             {
                 if (!Edges.Any()) return;
@@ -38,10 +42,10 @@ namespace Hanashi.Editortime
                 var connectedPorts = Edges.Where(x => x.input.node != null).ToArray();
                 for (var i = 0; i < connectedPorts.Length; i++)
                 {
-                    var outputNode = connectedPorts[i].output.node as ChoiceNode;
-                    var inputNode = connectedPorts[i].input.node as ChoiceNode;
+                    var outputNode = connectedPorts[i].output.node as HanashiNode;
+                    var inputNode = connectedPorts[i].input.node as HanashiNode;
 
-                    dialogueGraphData.NodeLinks.Add(new DialogueNodeLinkData()
+                    dialogueGraphData.NodeLinks.Add(new NodeLinkData()
                     {
                         OutputNodeGUID = outputNode.GUID,
                         InputNodeGUID = inputNode.GUID,
@@ -49,31 +53,30 @@ namespace Hanashi.Editortime
                     });
                 }
 
-                foreach (var dialogueNode in DialogueNodes.Where(node => !node.EntryPoint))
+                foreach (TextNode hanashiNode in HanashiNodes.Where(node => node is TextNode))
                 {
-                    dialogueGraphData.Nodes.Add(new DialogueNodeData()
+                    dialogueGraphData.Nodes.Add(new NodeData()
                     {
-                        GUID = dialogueNode.GUID,
-                        Message = dialogueNode.Message,
-                        Position = dialogueNode.GetPosition().position
+                        GUID = hanashiNode.GUID,
+                        Message = hanashiNode.Message,
+                        Position = hanashiNode.GetPosition().position
                     });
                 }
             }
             void SaveExposedProperties()
             {
                 dialogueGraphData.ExposedProperties.AddRange(_targetGraphView.ExposedProperties);
-            }
+            } 
+            #endregion
         }
-
-        private DialogueGraphData _loadedGraphData;
 
         public void LoadGraph(string fileName)
         {
-            _loadedGraphData = Resources.Load<DialogueGraphData>(fileName);
+            _loadedNarrativeData = Resources.Load<NarrativeData>(fileName);
 
-            if(_loadedGraphData == null)
+            if(_loadedNarrativeData == null)
             {
-                EditorUtility.DisplayDialog("Error", "File dones't exist", "ok");
+                EditorUtility.DisplayDialog("Error", "File doesn't exist", "ok");
                 return;
             }
 
@@ -82,11 +85,12 @@ namespace Hanashi.Editortime
             LoadNodeLinks();
             LoadExposedProperties();
 
+            #region Nested
             void ClearGraphView()
             {
-                DialogueNodes.Find(x => x.EntryPoint).GUID = _loadedGraphData.NodeLinks[0].OutputNodeGUID;
+                HanashiNodes.Find(x => x.EntryPoint).GUID = _loadedNarrativeData.NodeLinks[0].OutputNodeGUID;
 
-                foreach (var node in DialogueNodes)
+                foreach (var node in HanashiNodes)
                 {
                     if (node.EntryPoint) continue;
 
@@ -100,30 +104,30 @@ namespace Hanashi.Editortime
             }
             void LoadNodes()
             {
-                foreach (var nodeData in _loadedGraphData.Nodes)
+                foreach (var nodeData in _loadedNarrativeData.Nodes)
                 {
                     var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Position);
                     tempNode.GUID = nodeData.GUID;
                     tempNode.Message = nodeData.Message;
 
-                    var nodePorts = _loadedGraphData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
+                    var nodePorts = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
                     nodePorts.ForEach(x => _targetGraphView.CreateChoicePort(tempNode, x.PortName));
                 }
             }
             void LoadNodeLinks()
             {
-                for (int i = 0; i < DialogueNodes.Count; i++)
+                for (int i = 0; i < HanashiNodes.Count; i++)
                 {
-                    var links = _loadedGraphData.NodeLinks.Where(x => x.OutputNodeGUID == DialogueNodes[i].GUID).ToList();
+                    var links = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == HanashiNodes[i].GUID).ToList();
                     for (int j = 0; j < links.Count; j++)
                     {
                         var inputNodeGUID = links[j].InputNodeGUID;
-                        var inputNode = DialogueNodes.First(x => x.GUID == inputNodeGUID);
-                        LinkNodes(DialogueNodes[i].outputContainer[j].Q<Port>(), (Port)inputNode.inputContainer[0]);
+                        var inputNode = HanashiNodes.First(x => x.GUID == inputNodeGUID);
+                        LinkNodes(HanashiNodes[i].outputContainer[j].Q<Port>(), (Port)inputNode.inputContainer[0]);
 
                         inputNode.SetPosition(new Rect(
-                            _loadedGraphData.Nodes.First(x => x.GUID == inputNodeGUID).Position,
-                            DialogueGraphView.DEFAULT_NODE_SIZE));
+                            _loadedNarrativeData.Nodes.First(x => x.GUID == inputNodeGUID).Position,
+                            NarrativeGraphView.DEFAULT_NODE_SIZE));
                     }
                 }
             }
@@ -143,14 +147,15 @@ namespace Hanashi.Editortime
             {
                 _targetGraphView.ClearBlackboard();
 
-                foreach (var exposedProperty in _loadedGraphData.ExposedProperties) 
+                foreach (var exposedProperty in _loadedNarrativeData.ExposedProperties)
                 {
                     _targetGraphView.AddPropertyToBlackboard(exposedProperty);
                 }
-            }
+            } 
+            #endregion
         }
         
         private List<Edge> Edges => _targetGraphView.edges.ToList();
-        private List<ChoiceNode> DialogueNodes => _targetGraphView.nodes.ToList().Cast<ChoiceNode>().ToList();
+        private List<HanashiNode> HanashiNodes => _targetGraphView.nodes.ToList().Cast<HanashiNode>().ToList();
     }
 }

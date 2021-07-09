@@ -10,6 +10,8 @@ namespace Hanashi.Editortime
     {
         public string GUID;
 
+        public bool EntryPoint = false;
+
         public HanashiNode() : base()
         {
             GUID = Guid.NewGuid().ToString().Substring(0, 8);

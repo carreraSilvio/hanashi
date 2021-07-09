@@ -3,7 +3,7 @@
 namespace Hanashi.Runtime
 {
     [Serializable]
-    public class DialogueNodeLinkData
+    public class NodeLinkData
     {
         public string OutputNodeGUID;
         public string PortName;

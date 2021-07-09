@@ -1,7 +1,4 @@
-﻿using Hanashi.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -10,20 +7,20 @@ using UnityEngine.UIElements;
 
 namespace Hanashi.Editortime
 {
-    public class DialogueGraphEditor : EditorWindow
+    public class NarrativeGraphEditor : EditorWindow
     {
         #region MenuItem
-        [MenuItem("Tools/Hanashi Dialogue Editor")]
+        [MenuItem("Tools/Hanashi Narrative Editor")]
         public static void OpenHanashiDialogueEditor()
         {
-            var window = GetWindow<DialogueGraphEditor>();
-            window.titleContent = new GUIContent("Hanashi Dialogue Editor");
+            var window = GetWindow<NarrativeGraphEditor>();
+            window.titleContent = new GUIContent("Hanashi Narrative Editor");
         } 
         #endregion
 
-        private DialogueGraphView _graphView;
+        private NarrativeGraphView _graphView;
         private string _fileName = "New Narrative";
-        private DialogueNodeSearchWindow _searchWindow;
+        private NarrativeGraphSearchWindow _searchWindow;
 
         #region Unity
         private void OnEnable()
@@ -43,7 +40,7 @@ namespace Hanashi.Editortime
 
         private void CreateGraph()
         {
-            _graphView = new DialogueGraphView
+            _graphView = new NarrativeGraphView
             {
                 name = "Dialogue Graph"
             };
@@ -67,14 +64,14 @@ namespace Hanashi.Editortime
 
             var nodeCreationBtn = new Button(() =>
             {
-                _graphView.CreateDialogueNode(DialogueGraphView.DEFAULT_NODE_POSITION);
+                _graphView.CreateDialogueNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
             })
             {
                 text = "Create node"
             };
             var textNodeCreationBtn = new Button(() =>
             {
-                _graphView.CreateTextNode(DialogueGraphView.DEFAULT_NODE_POSITION);
+                _graphView.CreateTextNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
             })
             {
                 text = "Create text node"
@@ -95,7 +92,7 @@ namespace Hanashi.Editortime
 
         private void CreateSearchWindow()
         {
-            _searchWindow = ScriptableObject.CreateInstance<DialogueNodeSearchWindow>();
+            _searchWindow = ScriptableObject.CreateInstance<NarrativeGraphSearchWindow>();
             _searchWindow.Init(this, _graphView);
             _graphView.nodeCreationRequest = context =>
                 SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
@@ -109,7 +106,7 @@ namespace Hanashi.Editortime
                 return;
             }
 
-            var saveUtility = DialogueGraphSaveUtility.GetInstance(_graphView);
+            var saveUtility = SaveUtility.GetInstance(_graphView);
             if (save)
             {
                 saveUtility.SaveGraph(_fileName);

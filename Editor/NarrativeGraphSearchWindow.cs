@@ -6,13 +6,13 @@ using UnityEngine.UIElements;
 
 namespace Hanashi.Editortime
 {
-    public class DialogueNodeSearchWindow : ScriptableObject, ISearchWindowProvider
+    public class NarrativeGraphSearchWindow : ScriptableObject, ISearchWindowProvider
     {
-        private DialogueGraphView _dialogueGraphView;
+        private NarrativeGraphView _dialogueGraphView;
         private Texture2D _indentationIcon;
         private EditorWindow _editorWindow;
 
-        public void Init(EditorWindow editorWindow, DialogueGraphView dialogueGraphView)
+        public void Init(EditorWindow editorWindow, NarrativeGraphView dialogueGraphView)
         {
             _editorWindow = editorWindow;
             _dialogueGraphView = dialogueGraphView;
