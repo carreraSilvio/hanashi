@@ -1,6 +1,6 @@
 ﻿namespace Hanashi.Editortime
 {
-    public class TextNode : HanashiNode
+    public class TextNode : NarrativeNode
     {
         public string Speaker;
         public string Message;

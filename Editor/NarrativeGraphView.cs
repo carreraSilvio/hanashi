@@ -57,15 +57,16 @@ namespace Hanashi.Editortime
             return node.InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
         }
 
-        private HanashiNode GenerateStartNode()
+        private NarrativeNode GenerateStartNode()
         {
-            var node = new HanashiNode();
+            var node = new NarrativeNode();
 
             var generatedPort = GeneratePort(node, Direction.Output);
             generatedPort.portName = "Next";
             node.outputContainer.Add(generatedPort);
-            node.EntryPoint = true;
+            node.IsStartNode = true;
             node.title = "Start Node";
+            node.styleSheets.Add(Resources.Load<StyleSheet>("StartNodeStyle"));
 
             node.capabilities &= ~Capabilities.Deletable; 
 

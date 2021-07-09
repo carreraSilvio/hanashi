@@ -26,8 +26,8 @@ namespace Hanashi.Editortime
         private void OnEnable()
         {
             CreateGraph(); 
-            CreateToolBar();
-            CreateMiniMap();
+            CreateToolbar();
+            //CreateMiniMap();
             CreateSearchWindow();
             _graphView.CreateBlackboard();
         }
@@ -49,7 +49,7 @@ namespace Hanashi.Editortime
             rootVisualElement.Add(_graphView);
         }
 
-        private void CreateToolBar()
+        private void CreateToolbar()
         {
             var toolbar = new Toolbar();
 
@@ -62,23 +62,26 @@ namespace Hanashi.Editortime
             toolbar.Add(new Button(() => RequestDataOperation(true)) { text = "Save" });
             toolbar.Add(new Button(() => RequestDataOperation(false)) { text = "Load" });
 
-            var textNodeCreationBtn = new Button(() =>
-            {
-                _graphView.CreateTextNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
-            })
-            {
-                text = "Add text node"
-            };
-            var nodeCreationBtn = new Button(() =>
-            {
-                _graphView.CrateChoiceNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
-            })
-            {
-                text = "Add choice node"
-            };
+            
+            toolbar.Add(
+                new Button(() =>
+                {
+                    _graphView.CreateTextNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
+                })
+                {
+                    text = "Add text node",
+                }
+            );
+            toolbar.Add(
+                new Button(() =>
+                {
+                    _graphView.CrateChoiceNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
+                })
+                {
+                    text = "Add choice node",
+                }
+            );
 
-            toolbar.Add(nodeCreationBtn);
-            toolbar.Add(textNodeCreationBtn);
             rootVisualElement.Add(toolbar);
         }
 

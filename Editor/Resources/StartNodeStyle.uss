@@ -1,0 +1,4 @@
+﻿NarrativeNode #title
+{
+    background-color: rgb(125, 125, 25);
+}

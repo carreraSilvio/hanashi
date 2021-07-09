@@ -42,8 +42,8 @@ namespace Hanashi.Editortime
                 var connectedPorts = Edges.Where(x => x.input.node != null).ToArray();
                 for (var i = 0; i < connectedPorts.Length; i++)
                 {
-                    var outputNode = connectedPorts[i].output.node as HanashiNode;
-                    var inputNode = connectedPorts[i].input.node as HanashiNode;
+                    var outputNode = connectedPorts[i].output.node as NarrativeNode;
+                    var inputNode = connectedPorts[i].input.node as NarrativeNode;
 
                     narrativeGraphData.NodeLinks.Add(new NodeLinkData()
                     {
@@ -88,11 +88,11 @@ namespace Hanashi.Editortime
             #region Nested
             void ClearGraphView()
             {
-                HanashiNodes.Find(x => x.EntryPoint).GUID = _loadedNarrativeData.NodeLinks[0].OutputNodeGUID;
+                HanashiNodes.Find(x => x.IsStartNode).GUID = _loadedNarrativeData.NodeLinks[0].OutputNodeGUID;
 
                 foreach (var node in HanashiNodes)
                 {
-                    if (node.EntryPoint) continue;
+                    if (node.IsStartNode) continue;
 
                     //Remove edges that connect to this node
                     Edges.Where(x => x.input.node == node).ToList()
@@ -156,6 +156,6 @@ namespace Hanashi.Editortime
         }
         
         private List<Edge> Edges => _targetGraphView.edges.ToList();
-        private List<HanashiNode> HanashiNodes => _targetGraphView.nodes.ToList().Cast<HanashiNode>().ToList();
+        private List<NarrativeNode> HanashiNodes => _targetGraphView.nodes.ToList().Cast<NarrativeNode>().ToList();
     }
 }
