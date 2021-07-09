@@ -67,7 +67,7 @@ namespace Hanashi.Editortime
 
             var nodeCreationBtn = new Button(() =>
             {
-                _graphView.CreateDialogueNode("NewNode", DialogueGraphView.DEFAULT_NODE_POSITION);
+                _graphView.CreateDialogueNode(DialogueGraphView.DEFAULT_NODE_POSITION);
             })
             {
                 text = "Create node"

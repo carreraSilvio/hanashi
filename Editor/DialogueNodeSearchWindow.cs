@@ -26,11 +26,16 @@ namespace Hanashi.Editortime
         {
             var tree = new List<SearchTreeEntry>
             {
-                new SearchTreeGroupEntry(new GUIContent("Create Elements"), level: 0), // Header
-                new SearchTreeGroupEntry(new GUIContent("Dialogue"), level: 1),
-                new SearchTreeEntry(new GUIContent("Dialogue Node", _indentationIcon))
+                new SearchTreeGroupEntry(new GUIContent("Create Node"), level: 0), // Header
+                new SearchTreeGroupEntry(new GUIContent("Nodes"), level: 1),
+                new SearchTreeEntry(new GUIContent("Text Node", _indentationIcon))
                 {
-                    userData = new DialogueNode(),
+                    userData = new TextNode(),
+                    level = 2
+                },
+                new SearchTreeEntry(new GUIContent("Choice Node", _indentationIcon))
+                {
+                    userData = new ChoiceNode(),
                     level = 2 // Higher levels means deeper in category
                 }
             };
@@ -44,9 +49,14 @@ namespace Hanashi.Editortime
 
             var localMousePosition = _dialogueGraphView.contentViewContainer.WorldToLocal(worldMousePosition);
 
-            if(SearchTreeEntry.userData is DialogueNode)
+            if (SearchTreeEntry.userData is ChoiceNode) //Every ChoiceNode is a TextNode so we need to check it first
             {
-                _dialogueGraphView.CreateDialogueNode("Dialogue Node", localMousePosition);
+                _dialogueGraphView.CreateDialogueNode(localMousePosition);
+                return true;
+            }
+            else if (SearchTreeEntry.userData is TextNode)
+            {
+                _dialogueGraphView.CreateTextNode(localMousePosition);
                 return true;
             }
 

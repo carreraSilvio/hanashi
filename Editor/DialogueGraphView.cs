@@ -57,15 +57,9 @@ namespace Hanashi.Editortime
             return node.InstantiatePort(Orientation.Horizontal, portDirection, capacity, typeof(float));
         }
 
-        private DialogueNode GenerateStartNode()
+        private ChoiceNode GenerateStartNode()
         {
-            var node = new DialogueNode
-            {
-                title = "START",
-                GUID = Guid.NewGuid().ToString().Substring(0, 8),
-                Message = "EntryPoint",
-                EntryPoint = true
-            };
+            var node = new ChoiceNode();
 
             var generatedPort = GeneratePort(node, Direction.Output);
             generatedPort.portName = "Next";
@@ -80,7 +74,7 @@ namespace Hanashi.Editortime
             return node;
         }
 
-        public void CreateChoicePort(DialogueNode node, string portName = "")
+        public void CreateChoicePort(ChoiceNode node, string portName = "")
         {
             var generatedPort = GeneratePort(node, Direction.Output);
 
@@ -111,7 +105,7 @@ namespace Hanashi.Editortime
             node.RefreshExpandedState();
         }
 
-        private void RemoveChoicePort(DialogueNode dialogueNode, Port generatedPort)
+        private void RemoveChoicePort(ChoiceNode dialogueNode, Port generatedPort)
         {
             var targetEdge = edges.ToList().Where(x =>
             x.output.portName == generatedPort.portName &&
@@ -129,9 +123,9 @@ namespace Hanashi.Editortime
             dialogueNode.RefreshExpandedState();
         }
 
-        public DialogueNode CreateDialogueNode(string nodeName, Vector2 nodePosition)
+        public ChoiceNode CreateDialogueNode(Vector2 nodePosition)
         {
-            var node = new DialogueNode
+            var node = new ChoiceNode
             {
                 title = "Dialogue Node",
                 Message = "Message",
@@ -140,9 +134,10 @@ namespace Hanashi.Editortime
 
             var inputPort = GeneratePort(node, Direction.Input, Port.Capacity.Multi);
             inputPort.name = "Input";
+            inputPort.portName = "Previous";
             node.inputContainer.Add(inputPort);
 
-            node.styleSheets.Add(Resources.Load<StyleSheet>("DialogueNodeStyle"));
+            node.styleSheets.Add(Resources.Load<StyleSheet>("ChoiceNodeStyle"));
 
             var button = new Button(() => { CreateChoicePort(node); })
             {
@@ -150,14 +145,21 @@ namespace Hanashi.Editortime
             };
             node.titleContainer.Add(button);
 
-            var textField = new TextField(string.Empty);
-            textField.RegisterValueChangedCallback(evt =>
+            node.mainContainer.Add(new Label("Speaker"));
+            var speakerTextField = new TextField(string.Empty);
+            speakerTextField.RegisterValueChangedCallback(evt =>
             {
                 node.Message = evt.newValue;
-                node.title = evt.newValue;
             });
-            textField.SetValueWithoutNotify(node.title);
-            node.mainContainer.Add(textField);
+            node.mainContainer.Add(speakerTextField);
+
+            node.mainContainer.Add(new Label("Message"));
+            var messageTextField = new TextField(string.Empty);
+            messageTextField.RegisterValueChangedCallback(evt =>
+            {
+                node.Message = evt.newValue;
+            });
+            node.mainContainer.Add(messageTextField);
 
             node.RefreshPorts();
             node.RefreshExpandedState();
@@ -174,6 +176,7 @@ namespace Hanashi.Editortime
 
             var inputPort = GeneratePort(node, Direction.Input, Port.Capacity.Multi);
             inputPort.name = "Input";
+            inputPort.portName = "Previous";
             node.inputContainer.Add(inputPort);
 
             var outputPort = GeneratePort(node, Direction.Output, Port.Capacity.Single);

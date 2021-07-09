@@ -38,8 +38,8 @@ namespace Hanashi.Editortime
                 var connectedPorts = Edges.Where(x => x.input.node != null).ToArray();
                 for (var i = 0; i < connectedPorts.Length; i++)
                 {
-                    var outputNode = connectedPorts[i].output.node as DialogueNode;
-                    var inputNode = connectedPorts[i].input.node as DialogueNode;
+                    var outputNode = connectedPorts[i].output.node as ChoiceNode;
+                    var inputNode = connectedPorts[i].input.node as ChoiceNode;
 
                     dialogueGraphData.NodeLinks.Add(new DialogueNodeLinkData()
                     {
@@ -102,9 +102,9 @@ namespace Hanashi.Editortime
             {
                 foreach (var nodeData in _loadedGraphData.Nodes)
                 {
-                    var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Message, nodeData.Position);
+                    var tempNode = _targetGraphView.CreateDialogueNode(nodeData.Position);
                     tempNode.GUID = nodeData.GUID;
-                    //_targetGraphView.AddElement(tempNode);
+                    tempNode.Message = nodeData.Message;
 
                     var nodePorts = _loadedGraphData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
                     nodePorts.ForEach(x => _targetGraphView.CreateChoicePort(tempNode, x.PortName));
@@ -151,6 +151,6 @@ namespace Hanashi.Editortime
         }
         
         private List<Edge> Edges => _targetGraphView.edges.ToList();
-        private List<DialogueNode> DialogueNodes => _targetGraphView.nodes.ToList().Cast<DialogueNode>().ToList();
+        private List<ChoiceNode> DialogueNodes => _targetGraphView.nodes.ToList().Cast<ChoiceNode>().ToList();
     }
 }
