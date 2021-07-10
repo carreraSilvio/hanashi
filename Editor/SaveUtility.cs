@@ -106,7 +106,7 @@ namespace HanashiEditor
             {
                 foreach (var nodeData in _loadedNarrativeData.Nodes)
                 {
-                    var tempNode = _targetGraphView.CrateChoiceNode(nodeData.Position);
+                    var tempNode = _targetGraphView.CreateChoiceNode(nodeData.Position);
                     tempNode.GUID = nodeData.GUID;
                     tempNode.Message = nodeData.Message;
 

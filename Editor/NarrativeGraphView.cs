@@ -78,14 +78,15 @@ namespace HanashiEditor
             return node;
         }
 
-        public void CreateChoicePort(ChoiceNode node, string portName = "")
+        public void CreateChoicePort(ChoiceNode choiceNode, string portName = "", string text = "", bool canBeRemoved = true)
         {
-            var generatedPort = GeneratePort(node, Direction.Output);
+            var generatedPort = GeneratePort(choiceNode, Direction.Output);
 
             var oldLabel = generatedPort.contentContainer.Q<Label>("type");
-            generatedPort.contentContainer.Remove(oldLabel);
+            oldLabel.visible = false; //Hiding the label instead of removing so it's easier to drag the output
+            //generatedPort.contentContainer.Remove(oldLabel);
 
-            var outputPortCount = node.outputContainer.Query("connector").ToList().Count;
+            var outputPortCount = choiceNode.outputContainer.Query("connector").ToList().Count;
             generatedPort.portName = string.IsNullOrEmpty(portName) ?
                 $"Choice {outputPortCount + 1}" :
                 portName;
@@ -93,23 +94,28 @@ namespace HanashiEditor
             var textField = new TextField
             {
                 name = string.Empty,
-                value = generatedPort.portName
+                value = text,
+                
             };
             textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
             generatedPort.contentContainer.Add(new Label(" "));
             generatedPort.contentContainer.Add(textField);
-            var deleteBtn = new Button(() => RemoveChoicePort(node, generatedPort))
+            
+            var deleteBtn = new Button(() => RemoveChoicePort(choiceNode, generatedPort))
             {
                 text = "X"
             };
+            deleteBtn.visible = canBeRemoved; //Making it invisible so we keep the same space
             generatedPort.contentContainer.Add(deleteBtn);
+            
+            choiceNode.Options.Add(new ChoiceNodeOption(generatedPort.portName, text, canBeRemoved));
 
-            node.outputContainer.Add(generatedPort);
-            node.RefreshPorts();
-            node.RefreshExpandedState();
+            choiceNode.outputContainer.Add(generatedPort);
+            choiceNode.RefreshPorts();
+            choiceNode.RefreshExpandedState();
         }
 
-        private void RemoveChoicePort(ChoiceNode dialogueNode, Port generatedPort)
+        private void RemoveChoicePort(ChoiceNode choiceNode, Port generatedPort)
         {
             var targetEdge = edges.ToList().Where(x =>
             x.output.portName == generatedPort.portName &&
@@ -122,12 +128,14 @@ namespace HanashiEditor
                 RemoveElement(targetEdge.First());
             }
 
-            dialogueNode.outputContainer.Remove(generatedPort);
-            dialogueNode.RefreshPorts();
-            dialogueNode.RefreshExpandedState();
+            var choiceNodeOption = choiceNode.Options.Find(choice => choice.OutputPortName == generatedPort.portName);
+            choiceNode.Options.Remove(choiceNodeOption);
+            choiceNode.outputContainer.Remove(generatedPort);
+            choiceNode.RefreshPorts();
+            choiceNode.RefreshExpandedState();
         }
 
-        public ChoiceNode CrateChoiceNode(Vector2 nodePosition)
+        public ChoiceNode CreateChoiceNode(Vector2 nodePosition)
         {
             var node = new ChoiceNode();
 
@@ -164,6 +172,9 @@ namespace HanashiEditor
             node.RefreshExpandedState();
 
             node.SetPosition(new Rect(nodePosition, DEFAULT_NODE_SIZE));
+
+            CreateChoicePort(node, text: "Yes", canBeRemoved: false);
+            CreateChoicePort(node, text: "No");
 
             AddElement(node);
             return node;
@@ -217,7 +228,7 @@ namespace HanashiEditor
             _blackboard.addItemRequested = HandleBlackboardAddRequested;
             _blackboard.editTextRequested = HandleBlackboardEditRequested;
             _blackboard.SetPosition(new Rect(10, 140 + 40, 180, 200));
-            Add(_blackboard);
+            //Add(_blackboard); //Hiding it for now
         }
 
         public void ClearBlackboard()

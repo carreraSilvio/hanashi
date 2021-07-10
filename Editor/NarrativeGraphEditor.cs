@@ -75,7 +75,7 @@ namespace HanashiEditor
             toolbar.Add(
                 new Button(() =>
                 {
-                    _graphView.CrateChoiceNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
+                    _graphView.CreateChoiceNode(NarrativeGraphView.DEFAULT_NODE_POSITION);
                 })
                 {
                     text = "Add choice node",

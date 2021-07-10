@@ -52,7 +52,7 @@ namespace HanashiEditor
 
             if (SearchTreeEntry.userData is ChoiceNode) //Every ChoiceNode is a TextNode so we need to check it first
             {
-                _dialogueGraphView.CrateChoiceNode(localMousePosition);
+                _dialogueGraphView.CreateChoiceNode(localMousePosition);
                 return true;
             }
             else if (SearchTreeEntry.userData is TextNode)
