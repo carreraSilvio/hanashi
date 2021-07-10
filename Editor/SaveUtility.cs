@@ -1,4 +1,4 @@
-﻿using Hanashi.Runtime;
+﻿using Hanashi;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -6,7 +6,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Hanashi.Editortime
+namespace HanashiEditor
 {
     public sealed class SaveUtility
     {
@@ -66,7 +66,7 @@ namespace Hanashi.Editortime
             void SaveExposedProperties()
             {
                 narrativeGraphData.ExposedProperties.AddRange(_targetGraphView.ExposedProperties);
-            } 
+            }
             #endregion
         }
 
@@ -74,7 +74,7 @@ namespace Hanashi.Editortime
         {
             _loadedNarrativeData = Resources.Load<NarrativeData>(fileName);
 
-            if(_loadedNarrativeData == null)
+            if (_loadedNarrativeData == null)
             {
                 EditorUtility.DisplayDialog("Error", "File doesn't exist", "ok");
                 return;
@@ -151,10 +151,10 @@ namespace Hanashi.Editortime
                 {
                     _targetGraphView.AddPropertyToBlackboard(exposedProperty);
                 }
-            } 
+            }
             #endregion
         }
-        
+
         private List<Edge> Edges => _targetGraphView.edges.ToList();
         private List<NarrativeNode> HanashiNodes => _targetGraphView.nodes.ToList().Cast<NarrativeNode>().ToList();
     }

@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using HanshiEditor;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Hanashi.Editortime
+namespace HanashiEditor
 {
     public class NarrativeGraphSearchWindow : ScriptableObject, ISearchWindowProvider
     {

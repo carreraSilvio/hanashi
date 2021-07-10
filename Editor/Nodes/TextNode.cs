@@ -1,4 +1,4 @@
-﻿namespace Hanashi.Editortime
+﻿namespace HanashiEditor
 {
     public class TextNode : NarrativeNode
     {

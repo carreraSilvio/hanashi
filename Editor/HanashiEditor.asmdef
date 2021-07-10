@@ -1,0 +1,17 @@
+{
+    "name": "HanashiEditor",
+    "references": [
+        "GUID:26ddfc10499c94649b72e6377460245a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Hanashi.Runtime
+namespace Hanashi
 {
     public class NarrativeData : ScriptableObject
     {

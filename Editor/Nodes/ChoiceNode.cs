@@ -1,4 +1,6 @@
-﻿namespace Hanashi.Editortime
+﻿using HanashiEditor;
+
+namespace HanshiEditor
 {
     public class ChoiceNode : TextNode
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hanashi.Runtime
+namespace Hanashi
 {
     [Serializable]
     public class NodeLinkData

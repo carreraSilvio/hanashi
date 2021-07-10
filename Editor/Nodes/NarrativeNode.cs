@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEditor.Experimental.GraphView;
 
-namespace Hanashi.Editortime
+namespace HanashiEditor
 {
     /// <summary>
     /// Base type for all nodes in the Hanashi Narrative Editor

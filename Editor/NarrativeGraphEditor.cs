@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Hanashi.Editortime
+namespace HanashiEditor
 {
     public class NarrativeGraphEditor : EditorWindow
     {
@@ -15,7 +15,7 @@ namespace Hanashi.Editortime
         {
             var window = GetWindow<NarrativeGraphEditor>();
             window.titleContent = new GUIContent("Hanashi Narrative Editor");
-        } 
+        }
         #endregion
 
         private NarrativeGraphView _graphView;
@@ -25,7 +25,7 @@ namespace Hanashi.Editortime
         #region Unity
         private void OnEnable()
         {
-            CreateGraph(); 
+            CreateGraph();
             CreateToolbar();
             //CreateMiniMap();
             CreateSearchWindow();
@@ -35,7 +35,7 @@ namespace Hanashi.Editortime
         private void OnDisable()
         {
             rootVisualElement.Remove(_graphView);
-        } 
+        }
         #endregion
 
         private void CreateGraph()
@@ -62,7 +62,7 @@ namespace Hanashi.Editortime
             toolbar.Add(new Button(() => RequestDataOperation(true)) { text = "Save" });
             toolbar.Add(new Button(() => RequestDataOperation(false)) { text = "Load" });
 
-            
+
             toolbar.Add(
                 new Button(() =>
                 {
@@ -95,15 +95,15 @@ namespace Hanashi.Editortime
 
         private void CreateSearchWindow()
         {
-            _searchWindow = ScriptableObject.CreateInstance<NarrativeGraphSearchWindow>();
+            _searchWindow = CreateInstance<NarrativeGraphSearchWindow>();
             _searchWindow.Init(this, _graphView);
             _graphView.nodeCreationRequest = context =>
                 SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
         }
-       
+
         private void RequestDataOperation(bool save)
         {
-            if(string.IsNullOrEmpty(_fileName))
+            if (string.IsNullOrEmpty(_fileName))
             {
                 EditorUtility.DisplayDialog("Invalid file name", "Please enter a valid filename", "OK");
                 return;

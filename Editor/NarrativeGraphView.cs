@@ -1,4 +1,5 @@
-﻿using Hanashi.Runtime;
+﻿using Hanashi;
+using HanshiEditor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
 
-namespace Hanashi.Editortime
+namespace HanashiEditor
 {
     public class NarrativeGraphView : GraphView
     {
@@ -19,7 +20,7 @@ namespace Hanashi.Editortime
 
         private static readonly Vector2 START_NODE_SIZE = new Vector2(150f, 150f);
         private static readonly Vector2 START_NODE_POSITION = new Vector2(200f, 150f);
-        
+
         private Blackboard _blackboard;
 
         public NarrativeGraphView()
@@ -44,7 +45,7 @@ namespace Hanashi.Editortime
             var compatiblePorts = new List<Port>();
             ports.ForEach((port) =>
             {
-                if(startPort != port && startPort.node != port.node)
+                if (startPort != port && startPort.node != port.node)
                 {
                     compatiblePorts.Add(port);
                 }
@@ -68,7 +69,7 @@ namespace Hanashi.Editortime
             node.title = "Start Node";
             node.styleSheets.Add(Resources.Load<StyleSheet>("StartNodeStyle"));
 
-            node.capabilities &= ~Capabilities.Deletable; 
+            node.capabilities &= ~Capabilities.Deletable;
 
             node.RefreshPorts();
             node.RefreshExpandedState();
@@ -85,7 +86,7 @@ namespace Hanashi.Editortime
             generatedPort.contentContainer.Remove(oldLabel);
 
             var outputPortCount = node.outputContainer.Query("connector").ToList().Count;
-            generatedPort.portName = string.IsNullOrEmpty(portName) ? 
+            generatedPort.portName = string.IsNullOrEmpty(portName) ?
                 $"Choice {outputPortCount + 1}" :
                 portName;
 
