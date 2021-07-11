@@ -54,7 +54,7 @@ namespace HanashiEditor
                     });
                 }
 
-                foreach (TextNode textNode in HanashiNodes.Where(node => node is TextNode))
+                foreach (TextNode textNode in NarrativeNodes.Where(node => node is TextNode))
                 {
                     narrativeGraphData.Nodes.Add(new NodeData()
                     {
@@ -91,9 +91,9 @@ namespace HanashiEditor
             #region Nested
             void ClearGraphView()
             {
-                HanashiNodes.Find(x => x.IsStartNode).GUID = _loadedNarrativeData.NodeLinks[0].OutputNodeGUID;
+                NarrativeNodes.Find(x => x.IsStartNode).GUID = _loadedNarrativeData.NodeLinks[0].OutputNodeGUID;
 
-                foreach (var node in HanashiNodes)
+                foreach (var node in NarrativeNodes)
                 {
                     if (node.IsStartNode) continue;
 
@@ -114,8 +114,8 @@ namespace HanashiEditor
                         var tempNode = _targetGraphView.CreateChoiceNode(nodeData.Position);
 
                         tempNode.GUID = nodeData.GUID;
-                        tempNode.Speaker = nodeData.Speaker;
-                        tempNode.Message = nodeData.Message;
+                        tempNode.contentContainer.Q<TextField>("Speaker").value = nodeData.Speaker;
+                        tempNode.contentContainer.Q<TextField>("Message").value = nodeData.Message;
 
                         var nodePorts = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
                         //Skiping the first one because we always have the first output port as fixed "YES"
@@ -129,21 +129,21 @@ namespace HanashiEditor
                         var tempNode = _targetGraphView.CreateTextNode(nodeData.Position);
 
                         tempNode.GUID = nodeData.GUID;
-                        tempNode.Speaker = nodeData.Speaker;
-                        tempNode.Message = nodeData.Message;
+                        tempNode.contentContainer.Q<TextField>("Speaker").value = nodeData.Speaker;
+                        tempNode.contentContainer.Q<TextField>("Message").value = nodeData.Message;
                     }
                 }
             }
             void LoadNodeLinks()
             {
-                for (int i = 0; i < HanashiNodes.Count; i++)
+                for (int i = 0; i < NarrativeNodes.Count; i++)
                 {
-                    var links = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == HanashiNodes[i].GUID).ToList();
+                    var links = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == NarrativeNodes[i].GUID).ToList();
                     for (int j = 0; j < links.Count; j++)
                     {
                         var inputNodeGUID = links[j].InputNodeGUID;
-                        var inputNode = HanashiNodes.First(x => x.GUID == inputNodeGUID);
-                        LinkNodes(HanashiNodes[i].outputContainer[j].Q<Port>(), (Port)inputNode.inputContainer[0]);
+                        var inputNode = NarrativeNodes.First(x => x.GUID == inputNodeGUID);
+                        LinkNodes(NarrativeNodes[i].outputContainer[j].Q<Port>(), (Port)inputNode.inputContainer[0]);
 
                         inputNode.SetPosition(new Rect(
                             _loadedNarrativeData.Nodes.First(x => x.GUID == inputNodeGUID).Position,
@@ -179,6 +179,6 @@ namespace HanashiEditor
         }
 
         private List<Edge> Edges => _targetGraphView.edges.ToList();
-        private List<NarrativeNode> HanashiNodes => _targetGraphView.nodes.ToList().Cast<NarrativeNode>().ToList();
+        private List<NarrativeNode> NarrativeNodes => _targetGraphView.nodes.ToList().Cast<NarrativeNode>().ToList();
     }
 }

@@ -149,15 +149,21 @@ namespace HanashiEditor
             node.titleContainer.Add(button);
 
             node.mainContainer.Add(new Label("Speaker"));
-            var speakerTextField = new TextField(string.Empty);
+            var speakerTextField = new TextField(string.Empty)
+            {
+                name = "Speaker"
+            };
             speakerTextField.RegisterValueChangedCallback(evt =>
             {
-                node.Message = evt.newValue;
+                node.Speaker = evt.newValue;
             });
             node.mainContainer.Add(speakerTextField);
 
             node.mainContainer.Add(new Label("Message"));
-            var messageTextField = new TextField(string.Empty);
+            var messageTextField = new TextField(string.Empty)
+            {
+                name = "Message"
+            };
             messageTextField.RegisterValueChangedCallback(evt =>
             {
                 node.Message = evt.newValue;
@@ -193,15 +199,21 @@ namespace HanashiEditor
             node.styleSheets.Add(Resources.Load<StyleSheet>("TextNodeStyle"));
 
             node.mainContainer.Add(new Label("Speaker"));
-            var speakerTextField = new TextField(string.Empty);
+            var speakerTextField = new TextField(string.Empty)
+            {
+                name = "Speaker"
+            };
             speakerTextField.RegisterValueChangedCallback(evt =>
             {
-                node.Message = evt.newValue;
+                node.Speaker = evt.newValue;
             });
             node.mainContainer.Add(speakerTextField);
 
             node.mainContainer.Add(new Label("Message"));
-            var messageTextField = new TextField(string.Empty);
+            var messageTextField = new TextField(string.Empty)
+            {
+                name = "Message"
+            };
             messageTextField.RegisterValueChangedCallback(evt =>
             {
                 node.Message = evt.newValue;
