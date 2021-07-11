@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Hanashi
@@ -7,7 +8,14 @@ namespace Hanashi
     public class NodeData
     {
         public string GUID;
-        public string Message;
         public Vector2 Position;
+        public string TypeFullName;
+
+        //Text Node
+        public string Speaker;
+        public string Message;
+
+        //Choice Node
+        public List<ChoiceNodeOption> choiceNodeOptions;
     }
 }

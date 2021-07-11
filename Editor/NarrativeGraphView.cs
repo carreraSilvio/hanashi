@@ -1,5 +1,4 @@
 ﻿using Hanashi;
-using HanshiEditor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +77,7 @@ namespace HanashiEditor
             return node;
         }
 
-        public void CreateChoicePort(ChoiceNode choiceNode, string portName = "", string text = "", bool canBeRemoved = true)
+        public void AddChoiceNodeOption(ChoiceNode choiceNode, string text = "", bool canBeRemoved = true)
         {
             var generatedPort = GeneratePort(choiceNode, Direction.Output);
 
@@ -87,35 +86,32 @@ namespace HanashiEditor
             //generatedPort.contentContainer.Remove(oldLabel);
 
             var outputPortCount = choiceNode.outputContainer.Query("connector").ToList().Count;
-            generatedPort.portName = string.IsNullOrEmpty(portName) ?
-                $"Choice {outputPortCount + 1}" :
-                portName;
+            generatedPort.portName = $"Choice {outputPortCount + 1}";
 
-            var textField = new TextField
+            var choiceText = new TextField
             {
                 name = string.Empty,
                 value = text,
-                
             };
-            textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
+            //choiceText.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
             generatedPort.contentContainer.Add(new Label(" "));
-            generatedPort.contentContainer.Add(textField);
+            generatedPort.contentContainer.Add(choiceText);
             
-            var deleteBtn = new Button(() => RemoveChoicePort(choiceNode, generatedPort))
+            var deleteBtn = new Button(() => RemoveChoiceNodeOption(choiceNode, generatedPort))
             {
                 text = "X"
             };
             deleteBtn.visible = canBeRemoved; //Making it invisible so we keep the same space
             generatedPort.contentContainer.Add(deleteBtn);
             
-            choiceNode.Options.Add(new ChoiceNodeOption(generatedPort.portName, text, canBeRemoved));
+            choiceNode.Options.Add(new ChoiceNodeOption(text, canBeRemoved));
 
             choiceNode.outputContainer.Add(generatedPort);
             choiceNode.RefreshPorts();
             choiceNode.RefreshExpandedState();
         }
 
-        private void RemoveChoicePort(ChoiceNode choiceNode, Port generatedPort)
+        private void RemoveChoiceNodeOption(ChoiceNode choiceNode, Port generatedPort)
         {
             var targetEdge = edges.ToList().Where(x =>
             x.output.portName == generatedPort.portName &&
@@ -146,7 +142,7 @@ namespace HanashiEditor
 
             node.styleSheets.Add(Resources.Load<StyleSheet>("ChoiceNodeStyle"));
 
-            var button = new Button(() => { CreateChoicePort(node); })
+            var button = new Button(() => { AddChoiceNodeOption(node); })
             {
                 text = "+"
             };
@@ -173,8 +169,8 @@ namespace HanashiEditor
 
             node.SetPosition(new Rect(nodePosition, DEFAULT_NODE_SIZE));
 
-            CreateChoicePort(node, text: "Yes", canBeRemoved: false);
-            CreateChoicePort(node, text: "No");
+            AddChoiceNodeOption(node, text: "Yes", canBeRemoved: false);
+            AddChoiceNodeOption(node, text: "No");
 
             AddElement(node);
             return node;

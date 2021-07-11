@@ -1,7 +1,7 @@
-﻿using HanashiEditor;
+﻿using Hanashi;
 using System.Collections.Generic;
 
-namespace HanshiEditor
+namespace HanashiEditor
 {
     public class ChoiceNode : TextNode
     {
@@ -10,21 +10,6 @@ namespace HanshiEditor
         public ChoiceNode() : base()
         {
             title = "Choice Node";
-        }
-
-    }
-
-    public sealed class ChoiceNodeOption
-    {
-        public string OutputPortName;
-        public string Text;
-        public bool CanBeRemoved;
-
-        public ChoiceNodeOption(string outputPortName, string text, bool canBeRemoved)
-        {
-            OutputPortName = outputPortName;
-            Text = text;
-            CanBeRemoved = canBeRemoved;
         }
     }
 }

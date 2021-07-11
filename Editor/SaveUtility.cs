@@ -1,4 +1,5 @@
 ﻿using Hanashi;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -53,13 +54,15 @@ namespace HanashiEditor
                     });
                 }
 
-                foreach (TextNode hanashiNode in HanashiNodes.Where(node => node is TextNode))
+                foreach (TextNode textNode in HanashiNodes.Where(node => node is TextNode))
                 {
                     narrativeGraphData.Nodes.Add(new NodeData()
                     {
-                        GUID = hanashiNode.GUID,
-                        Message = hanashiNode.Message,
-                        Position = hanashiNode.GetPosition().position
+                        GUID = textNode.GUID,
+                        Speaker = textNode.Speaker,
+                        Message = textNode.Message,
+                        Position = textNode.GetPosition().position,
+                        TypeFullName = textNode.GetType().FullName
                     });
                 }
             }
@@ -106,12 +109,29 @@ namespace HanashiEditor
             {
                 foreach (var nodeData in _loadedNarrativeData.Nodes)
                 {
-                    var tempNode = _targetGraphView.CreateChoiceNode(nodeData.Position);
-                    tempNode.GUID = nodeData.GUID;
-                    tempNode.Message = nodeData.Message;
+                    if (Type.GetType(nodeData.TypeFullName) == typeof(ChoiceNode))
+                    {
+                        var tempNode = _targetGraphView.CreateChoiceNode(nodeData.Position);
 
-                    var nodePorts = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
-                    nodePorts.ForEach(x => _targetGraphView.CreateChoicePort(tempNode, x.PortName));
+                        tempNode.GUID = nodeData.GUID;
+                        tempNode.Speaker = nodeData.Speaker;
+                        tempNode.Message = nodeData.Message;
+
+                        var nodePorts = _loadedNarrativeData.NodeLinks.Where(x => x.OutputNodeGUID == nodeData.GUID).ToList();
+                        //Skiping the first one because we always have the first output port as fixed "YES"
+                        for (int i = 1; i < nodePorts.Count - 1; i++)
+                        {
+                            _targetGraphView.AddChoiceNodeOption(tempNode);
+                        }
+                    }
+                    else if (Type.GetType(nodeData.TypeFullName) == typeof(TextNode))
+                    {
+                        var tempNode = _targetGraphView.CreateTextNode(nodeData.Position);
+
+                        tempNode.GUID = nodeData.GUID;
+                        tempNode.Speaker = nodeData.Speaker;
+                        tempNode.Message = nodeData.Message;
+                    }
                 }
             }
             void LoadNodeLinks()
@@ -130,18 +150,21 @@ namespace HanashiEditor
                             NarrativeGraphView.DEFAULT_NODE_SIZE));
                     }
                 }
-            }
-            void LinkNodes(Port output, Port input)
-            {
-                var tempEdge = new Edge()
-                {
-                    output = output,
-                    input = input
-                };
 
-                tempEdge?.input.Connect(tempEdge);
-                tempEdge?.output.Connect(tempEdge);
-                _targetGraphView.Add(tempEdge);
+                #region Nested
+                void LinkNodes(Port output, Port input)
+                {
+                    var tempEdge = new Edge()
+                    {
+                        output = output,
+                        input = input
+                    };
+
+                    tempEdge?.input.Connect(tempEdge);
+                    tempEdge?.output.Connect(tempEdge);
+                    _targetGraphView.Add(tempEdge);
+                } 
+                #endregion
             }
             void LoadExposedProperties()
             {
