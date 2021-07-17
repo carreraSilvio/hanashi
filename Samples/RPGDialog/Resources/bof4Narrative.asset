@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6cd5dd764696654c84c5f1a85374199, type: 3}
+  m_Name: dummy
+  m_EditorClassIdentifier: 
+  Nodes:
+  - GUID: 8c441b4b
+    Position: {x: 623, y: 118}
+    TypeFullName: HanashiEditor.TextNode
+    Speaker: Nina
+    Message: Oh...Don't worry, Cray--I'm all right!
+  - GUID: 08542766
+    Position: {x: 379, y: 292}
+    TypeFullName: HanashiEditor.TextNode
+    Speaker: Nina
+    Message: Whew!  It's hot out here!
+  - GUID: 74e0834f
+    Position: {x: 908, y: 130}
+    TypeFullName: HanashiEditor.TextNode
+    Speaker: Cray
+    Message: I was just thinking that it's probably better if we don't move around
+      during the day...
+  NodeLinks:
+  - OutputNodeGUID: 7312c3f2
+    PortName: Next
+    InputNodeGUID: 08542766
+  - OutputNodeGUID: 08542766
+    PortName: Next
+    InputNodeGUID: 8c441b4b
+  - OutputNodeGUID: 8c441b4b
+    PortName: Next
+    InputNodeGUID: 74e0834f
+  ExposedProperties: []
