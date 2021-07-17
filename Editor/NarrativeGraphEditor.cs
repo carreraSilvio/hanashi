@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Threading;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -24,6 +24,9 @@ namespace HanashiEditor
         private Label _fileNameLabel;
         private readonly static string DEFAULT_NARRATIVE_NAME = "New Narrative";
 
+        private bool _isLoading;
+        private string _loadFullFilePath;
+
         #region Unity
         private void OnEnable()
         {
@@ -37,6 +40,19 @@ namespace HanashiEditor
         private void OnDisable()
         {
             rootVisualElement.Remove(_graphView);
+        }
+
+        private void OnGUI()
+        {
+            if(_isLoading)
+            {
+                //had to move the loading here because loading right after the file picker
+                //was causing the nodes to be drawn weird
+                var saveUtility = SaveUtility.GetInstance(_graphView);
+                saveUtility.LoadGraph(_loadFullFilePath);
+                UpdateFileNameLabel(_loadFullFilePath);
+                _isLoading = false;
+            }
         }
         #endregion
 
@@ -85,13 +101,13 @@ namespace HanashiEditor
             rootVisualElement.Add(toolbar);
         }
 
-        private void CreateMiniMap()
-        {
-            var miniMap = new MiniMap { anchored = true };
+        //private void CreateMiniMap()
+        //{
+            //var miniMap = new MiniMap { anchored = true };
             //var cords = _graphView.contentViewContainer.WorldToLocal(new Vector2(maxSize.x - 10, 30)); // Not working
-            miniMap.SetPosition(new Rect(10, 30, 120, 120));
-            _graphView.Add(miniMap);
-        }
+        //    miniMap.SetPosition(new Rect(10, 30, 120, 120));
+        //    _graphView.Add(miniMap);
+        //}
 
         private void CreateSearchWindow()
         {
@@ -118,8 +134,8 @@ namespace HanashiEditor
                 var fullFilePath = EditorUtility.OpenFilePanel("Load narrative", "Assets/Resources/", "asset");
                 if (!string.IsNullOrEmpty(fullFilePath))
                 {
-                    saveUtility.LoadGraph(fullFilePath);
-                    UpdateFileNameLabel(fullFilePath);
+                    _isLoading = true;
+                    _loadFullFilePath = fullFilePath;
                 }
             }
         }
@@ -127,8 +143,6 @@ namespace HanashiEditor
         private void UpdateFileNameLabel(string fullFilePath)
         {
             _fileNameLabel.text = $"Narrative [{Path.GetFileNameWithoutExtension(fullFilePath)}]";
-            _fileNameLabel.MarkDirtyRepaint();
-            rootVisualElement.MarkDirtyRepaint();
         }
     }
 }

@@ -138,7 +138,7 @@ namespace HanashiEditor
                     else if (Type.GetType(nodeData.TypeFullName) == typeof(TextNode))
                     {
                         var tempNode = _targetGraphView.CreateTextNode(nodeData.Position);
-
+                        
                         tempNode.GUID = nodeData.GUID;
                         tempNode.contentContainer.Q<TextField>("Speaker").value = nodeData.Speaker;
                         tempNode.contentContainer.Q<TextField>("Message").value = nodeData.Message;
