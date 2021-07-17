@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -19,8 +20,9 @@ namespace HanashiEditor
         #endregion
 
         private NarrativeGraphView _graphView;
-        private string _fileName = "New Narrative";
         private NarrativeGraphSearchWindow _searchWindow;
+        private Label _fileNameLabel;
+        private readonly static string DEFAULT_NARRATIVE_NAME = "New Narrative";
 
         #region Unity
         private void OnEnable()
@@ -53,15 +55,13 @@ namespace HanashiEditor
         {
             var toolbar = new Toolbar();
 
-            var fileNameTextField = new TextField("File name:");
-            fileNameTextField.SetValueWithoutNotify(_fileName);
-            fileNameTextField.MarkDirtyRepaint();
-            fileNameTextField.RegisterCallback(callback: (EventCallback<ChangeEvent<string>>)(evt => _fileName = evt.newValue));
-            toolbar.Add(fileNameTextField);
+            _fileNameLabel = new Label($"Editing [{DEFAULT_NARRATIVE_NAME}]");
+            toolbar.Add(_fileNameLabel);
 
             toolbar.Add(new Button(() => RequestDataOperation(true)) { text = "Save" });
             toolbar.Add(new Button(() => RequestDataOperation(false)) { text = "Load" });
 
+            toolbar.Add(new UnityEngine.UIElements.VisualElement());
 
             toolbar.Add(
                 new Button(() =>
@@ -103,25 +103,32 @@ namespace HanashiEditor
 
         private void RequestDataOperation(bool save)
         {
-            if (string.IsNullOrEmpty(_fileName))
-            {
-                EditorUtility.DisplayDialog("Invalid file name", "Please enter a valid filename", "OK");
-                return;
-            }
-
             var saveUtility = SaveUtility.GetInstance(_graphView);
             if (save)
             {
-                var fullFilePath = EditorUtility.SaveFilePanel("Save file", "Assets/Resources/", "Narrative", "asset");
+                var fullFilePath = EditorUtility.SaveFilePanel("Save narrative", "Assets/Resources/", DEFAULT_NARRATIVE_NAME, "asset");
                 if(!string.IsNullOrEmpty(fullFilePath))
                 {
                     saveUtility.SaveGraph(fullFilePath);
+                    UpdateFileNameLabel(fullFilePath);
                 }
             }
             else
             {
-                saveUtility.LoadGraph(_fileName);
+                var fullFilePath = EditorUtility.OpenFilePanel("Load narrative", "Assets/Resources/", "asset");
+                if (!string.IsNullOrEmpty(fullFilePath))
+                {
+                    saveUtility.LoadGraph(fullFilePath);
+                    UpdateFileNameLabel(fullFilePath);
+                }
             }
+        }
+
+        private void UpdateFileNameLabel(string fullFilePath)
+        {
+            _fileNameLabel.text = $"Narrative [{Path.GetFileNameWithoutExtension(fullFilePath)}]";
+            _fileNameLabel.MarkDirtyRepaint();
+            rootVisualElement.MarkDirtyRepaint();
         }
     }
 }

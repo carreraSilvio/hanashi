@@ -33,11 +33,8 @@ namespace HanashiEditor
                 return;
             }
            
-            Debug.Log("full path is " + fullFilePath);
             var subFilePath = PathUtils.GetSubFilePath(fullFilePath, "Assets");
             var subDirectoryPath = PathUtils.GetSubDirectoryPath(fullFilePath, "Assets");
-            Debug.Log("sub path is " + subFilePath);
-            Debug.Log("subDirectoryPath " + subDirectoryPath);
 
             if (!AssetDatabase.IsValidFolder(subDirectoryPath))
             {
@@ -86,8 +83,9 @@ namespace HanashiEditor
             #endregion
         }
 
-        public void LoadGraph(string fileName)
+        public void LoadGraph(string fullFilePath)
         {
+            var fileName = Path.GetFileNameWithoutExtension(fullFilePath);
             _loadedNarrativeData = Resources.Load<NarrativeData>(fileName);
 
             if (_loadedNarrativeData == null)
