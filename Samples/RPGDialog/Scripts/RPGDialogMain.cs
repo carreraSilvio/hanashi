@@ -6,28 +6,40 @@ using UnityEngine.UI;
 
 namespace HanashiSamples
 {
-    public class RPGDialogMain : MonoBehaviour
+    public sealed class RPGDialogMain : MonoBehaviour
     {
-        public NarrativeData narrativeData;
+        [Header("UI")]
+        [SerializeField] private Text _speaker = default;
+        [SerializeField] private Text _message = default;
 
-        public Text speaker;
-        public Text message;
-        private int _currentNode;
+        [Header("Data")]
+        [SerializeField] private NarrativeData _narrativeData = default;
+        
+        private int _currentNodeIndex;
         private int _totalNodes;
 
-        void Awake()
+        private void Awake()
         {
-            speaker.text = "";
-            message.text = "";
-            _totalNodes = narrativeData.Nodes.Count;
+            _speaker.text = "";
+            _message.text = "";
+            _totalNodes = _narrativeData.Nodes.Count;
+            UpdateDialogBox();
         }
 
-        void Update()
+        private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.Space))
+            if(Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
             {
-                
+                UpdateDialogBox();
             }
+        }
+
+        private void UpdateDialogBox()
+        {
+            var nodeData = _narrativeData.Nodes[_currentNodeIndex];
+            _speaker.text = nodeData.Speaker;
+            _message.text = nodeData.Message;
+            _currentNodeIndex = (_currentNodeIndex + 1) % _totalNodes;
         }
 
     }
