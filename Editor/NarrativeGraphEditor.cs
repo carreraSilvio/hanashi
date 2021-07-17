@@ -112,7 +112,11 @@ namespace HanashiEditor
             var saveUtility = SaveUtility.GetInstance(_graphView);
             if (save)
             {
-                saveUtility.SaveGraph(_fileName);
+                var fullFilePath = EditorUtility.SaveFilePanel("Save file", "Assets/Resources/", "Narrative", "asset");
+                if(!string.IsNullOrEmpty(fullFilePath))
+                {
+                    saveUtility.SaveGraph(fullFilePath);
+                }
             }
             else
             {

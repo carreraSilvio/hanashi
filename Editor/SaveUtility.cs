@@ -1,6 +1,7 @@
 ﻿using Hanashi;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -13,7 +14,6 @@ namespace HanashiEditor
     {
         private NarrativeGraphView _targetGraphView;
 
-
         private NarrativeData _loadedNarrativeData;
 
         public static SaveUtility GetInstance(NarrativeGraphView targetGraphView)
@@ -21,18 +21,31 @@ namespace HanashiEditor
             return new SaveUtility() { _targetGraphView = targetGraphView };
         }
 
-        public void SaveGraph(string fileName)
+        public void SaveGraph(string fullFilePath)
         {
             var narrativeGraphData = ScriptableObject.CreateInstance<NarrativeData>();
             SaveNodes();
             SaveExposedProperties();
 
-            if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+            if(!fullFilePath.Contains("Assets") || !fullFilePath.Contains("Resources"))
             {
-                AssetDatabase.CreateFolder("Assets", "Resources");
+                Debug.LogError("File must be inside the project in a Resources folder");
+                return;
+            }
+           
+            Debug.Log("full path is " + fullFilePath);
+            var subFilePath = PathUtils.GetSubFilePath(fullFilePath, "Assets");
+            var subDirectoryPath = PathUtils.GetSubDirectoryPath(fullFilePath, "Assets");
+            Debug.Log("sub path is " + subFilePath);
+            Debug.Log("subDirectoryPath " + subDirectoryPath);
+
+            if (!AssetDatabase.IsValidFolder(subDirectoryPath))
+            {
+                Debug.LogError("File must be inside the project in a Resources folder");
+                return;
             }
 
-            AssetDatabase.CreateAsset(narrativeGraphData, $"Assets/Resources/{fileName}.asset");
+            AssetDatabase.CreateAsset(narrativeGraphData, subFilePath);
             AssetDatabase.SaveAssets();
 
             #region Nested
