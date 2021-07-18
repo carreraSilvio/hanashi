@@ -104,7 +104,7 @@ namespace HanashiEditor
             deleteBtn.visible = canBeRemoved; //Making it invisible so we keep the same space
             generatedPort.contentContainer.Add(deleteBtn);
             
-            choiceNode.Options.Add(new ChoiceNodeOption(text, canBeRemoved));
+            choiceNode.Options.Add(new ChoiceNodeOption(text, canBeRemoved, generatedPort.portName));
 
             choiceNode.outputContainer.Add(generatedPort);
             choiceNode.RefreshPorts();
