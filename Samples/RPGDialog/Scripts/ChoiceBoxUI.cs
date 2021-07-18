@@ -25,7 +25,7 @@ namespace HanashiSamples
             {
                 var choiceItem = _choices[choiceItemIndex];
                 var choideData = nodeData.choiceNodeOptions[choiceItemIndex];
-                choiceItem.gameObject.SetActive(choiceItemIndex <= totalOptions - 1);
+                choiceItem.gameObject.SetActive(choiceItemIndex < totalOptions);
                 choiceItem.text.text = choideData.Text;
             }
 

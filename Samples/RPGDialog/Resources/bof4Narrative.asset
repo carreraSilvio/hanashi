@@ -41,6 +41,9 @@ MonoBehaviour:
     - OutputPortName: Choice 1
       Text: Yes
       CanBeRemoved: 0
+    - OutputPortName: Choice 2
+      Text: No
+      CanBeRemoved: 1
   - GUID: 294f571b
     Position: {x: 1967, y: -130}
     TypeFullName: HanashiEditor.TextNode
@@ -69,4 +72,7 @@ MonoBehaviour:
   - OutputNodeGUID: cf2c2b25
     PortName: Choice 1
     InputNodeGUID: 294f571b
+  - OutputNodeGUID: cf2c2b25
+    PortName: Choice 2
+    InputNodeGUID: 937d7288
   ExposedProperties: []
