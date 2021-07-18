@@ -16,6 +16,6 @@ namespace Hanashi
         public string Message;
 
         //Choice Node
-        public List<ChoiceNodeOption> choiceNodeOptions;
+        public List<ChoiceNodeOption> choiceNodeOptions = new List<ChoiceNodeOption>();
     }
 }

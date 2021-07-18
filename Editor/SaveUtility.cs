@@ -66,14 +66,24 @@ namespace HanashiEditor
 
                 foreach (TextNode textNode in NarrativeNodes.Where(node => node is TextNode))
                 {
-                    narrativeGraphData.Nodes.Add(new NodeData()
+                    var newNodeData = new NodeData()
                     {
                         GUID = textNode.GUID,
                         Speaker = textNode.Speaker,
                         Message = textNode.Message,
                         Position = textNode.GetPosition().position,
                         TypeFullName = textNode.GetType().FullName
-                    });
+                    };
+
+                    if(textNode is ChoiceNode choiceNode)
+                    {
+                        foreach (var choiceNodeOption in choiceNode.Options)
+                        {
+                            newNodeData.choiceNodeOptions.Add(choiceNodeOption);
+                        }
+                    }
+
+                    narrativeGraphData.Nodes.Add(newNodeData);
                 }
             }
             void SaveExposedProperties()

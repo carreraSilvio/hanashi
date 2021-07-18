@@ -27,9 +27,13 @@ namespace HanashiEditor
         private bool _isLoading;
         private string _loadFullFilePath;
 
+        private string _lastFileDirectoryPath = "Assets/Resources/";
+
         #region Unity
         private void OnEnable()
         {
+            _lastFileDirectoryPath = EditorPrefs.GetString("hanashi_lastFileDirectoryPath", "Assets/Resources/");
+
             CreateGraph();
             CreateToolbar();
             //CreateMiniMap();
@@ -122,20 +126,26 @@ namespace HanashiEditor
             var saveUtility = SaveUtility.GetInstance(_graphView);
             if (save)
             {
-                var fullFilePath = EditorUtility.SaveFilePanel("Save narrative", "Assets/Resources/", DEFAULT_NARRATIVE_NAME, "asset");
+                var fullFilePath = EditorUtility.SaveFilePanel("Save narrative", _lastFileDirectoryPath, DEFAULT_NARRATIVE_NAME, "asset");
                 if(!string.IsNullOrEmpty(fullFilePath))
                 {
+                    _lastFileDirectoryPath = PathUtils.GetSubDirectoryPath(fullFilePath, "Assets");
+                    EditorPrefs.SetString("hanashi_lastFileDirectoryPath", _lastFileDirectoryPath);
+
                     saveUtility.SaveGraph(fullFilePath);
                     UpdateFileNameLabel(fullFilePath);
                 }
             }
             else
             {
-                var fullFilePath = EditorUtility.OpenFilePanel("Load narrative", "Assets/Resources/", "asset");
+                var fullFilePath = EditorUtility.OpenFilePanel("Load narrative", _lastFileDirectoryPath, "asset");
                 if (!string.IsNullOrEmpty(fullFilePath))
                 {
-                    _isLoading = true;
+                    _lastFileDirectoryPath = PathUtils.GetSubDirectoryPath(fullFilePath, "Assets");
+                    EditorPrefs.SetString("hanashi_lastFileDirectoryPath", _lastFileDirectoryPath);
+
                     _loadFullFilePath = fullFilePath;
+                    _isLoading = true;
                 }
             }
         }

@@ -18,25 +18,55 @@ MonoBehaviour:
     TypeFullName: HanashiEditor.TextNode
     Speaker: Nina
     Message: Oh...Don't worry, Cray--I'm all right!
+    choiceNodeOptions: []
   - GUID: 08542766
     Position: {x: 379, y: 292}
     TypeFullName: HanashiEditor.TextNode
     Speaker: Nina
     Message: Whew!  It's hot out here!
+    choiceNodeOptions: []
   - GUID: 74e0834f
     Position: {x: 908, y: 130}
     TypeFullName: HanashiEditor.TextNode
     Speaker: Cray
     Message: I was just thinking that it's probably better if we don't move around
       during the day...
+    choiceNodeOptions: []
+  - GUID: cf2c2b25
+    Position: {x: 1565, y: 23}
+    TypeFullName: HanashiEditor.ChoiceNode
+    Speaker: Nina
+    Message: Do you think we should stay?
+    choiceNodeOptions:
+    - OutputPortName: Choice 1
+      Text: Yes
+      CanBeRemoved: 0
+  - GUID: 294f571b
+    Position: {x: 1967, y: -130}
+    TypeFullName: HanashiEditor.TextNode
+    Speaker: 'Cray '
+    Message: Of course he thinks we should stay.
+    choiceNodeOptions: []
+  - GUID: 937d7288
+    Position: {x: 1965, y: 82}
+    TypeFullName: HanashiEditor.TextNode
+    Speaker: 'Cray '
+    Message: You're joking right? We have to stay
+    choiceNodeOptions: []
   NodeLinks:
   - OutputNodeGUID: 7312c3f2
     PortName: Next
     InputNodeGUID: 08542766
-  - OutputNodeGUID: 08542766
-    PortName: Next
-    InputNodeGUID: 8c441b4b
   - OutputNodeGUID: 8c441b4b
     PortName: Next
     InputNodeGUID: 74e0834f
+  - OutputNodeGUID: 08542766
+    PortName: Next
+    InputNodeGUID: 8c441b4b
+  - OutputNodeGUID: 74e0834f
+    PortName: Next
+    InputNodeGUID: cf2c2b25
+  - OutputNodeGUID: cf2c2b25
+    PortName: Choice 1
+    InputNodeGUID: 294f571b
   ExposedProperties: []

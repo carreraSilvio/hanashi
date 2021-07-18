@@ -7,5 +7,7 @@ namespace HanashiSamples
     {
         [SerializeField] private Text _text = default;
 
+        public Text text => _text;
+
     }
 }
