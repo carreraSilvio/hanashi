@@ -1,7 +1,7 @@
 {
   "name": "com.hanashi",
   "version": "1.0.0",
-  "displayName": "Hanshi",
+  "displayName": "Hanashi",
   "description": "Node-base narrative editor",
   "unity": "2018.2",
   "unityRelease": "15f1",
