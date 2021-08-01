@@ -5,4 +5,4 @@
 - Create Choice Nodes
 - Save Narrative
 - Load Narrative
-- Sample showing loaded narrative working
+- Sample showing narrative working
